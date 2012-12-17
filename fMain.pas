@@ -138,6 +138,7 @@ begin
     if Assigned(MediaPlayer) and (MediaPlayer is TMediaPlayer) then
     begin
       // Attempts to load media
+      (MediaPlayer as TMediaPlayer).Clear;
       (MediaPlayer as TMediaPlayer).FileName := OpenDialog1.FileName;
       if (MediaPlayer as TMediaPlayer).State = TMediaState.Stopped then
       begin
@@ -251,6 +252,15 @@ begin
     MediaPlayer := GetObjectByName(MEDIA_PLAYER, I);
     if Assigned(MediaPlayer) and (MediaPlayer is TMediaPlayer) then
     begin
+      // Can it rewind the media?
+      with (MediaPlayer as TMediaPlayer) do
+        if State = TMediaState.Playing then
+          if (Duration = CurrentTime) then
+          begin
+            Stop;
+            CurrentTime := 0;
+          end;
+      
       // Send notification to cause expression re-evaluation of dependent expressions
       BindingsList1.Notify(MediaPlayer, '');
     end;
